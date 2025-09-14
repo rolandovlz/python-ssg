@@ -1,7 +1,7 @@
 import unittest
 
 from textnode import TextNode, TextType
-from helpers import text_node_to_html_node, split_nodes_delimiter
+from helpers import text_node_to_html_node, split_nodes_delimiter, extract_markdown_images, extract_markdown_links
 
 class TestTextNode(unittest.TestCase):
     def test_eq(self):
@@ -56,7 +56,7 @@ class TestTextNode(unittest.TestCase):
             TextNode("bold block", TextType.BOLD),
             TextNode(" word", TextType.TEXT)
         ]
-        self.assertEqual(new_nodes, expected_nodes)
+        self.assertListEqual(new_nodes, expected_nodes)
 
     def test_split_delimiter_text_type(self):
         node = TextNode("This is text with a **bold block** word", TextType.BOLD)
@@ -74,7 +74,50 @@ class TestTextNode(unittest.TestCase):
             TextNode("This is text with a `code block` word", TextType.LINK),
             TextNode("This is text with a `code block` word", TextType.IMAGE)
         ]
-        self.assertEqual(new_nodes, expected_nodes)
+        self.assertListEqual(new_nodes, expected_nodes)
+    
+    def test_extract_markdown_images_no_matches(self):
+        matches = extract_markdown_images(
+            "This is text with no images"
+        )
+        self.assertListEqual([], matches)
+
+    def test_extract_markdown_images(self):
+        matches = extract_markdown_images(
+            "This is text with an ![image](https://cdn.steamstatic.com/apps/dota2/images/dota_react/dota_footer_logo.png)"
+        )
+        self.assertListEqual([("image", "https://cdn.steamstatic.com/apps/dota2/images/dota_react/dota_footer_logo.png")], matches)
+
+    def test_extract_markdown_images_multiple(self):
+        matches = extract_markdown_images(
+            "This is text with a ![dota 2 logo](https://cdn.steamstatic.com/apps/dota2/images/dota_react/logo.png) and ![another dota 2 logo](https://cdn.steamstatic.com/apps/dota2/images/dota_react/logo.png)"
+        )
+        self.assertListEqual([
+                ("dota 2 logo", "https://cdn.steamstatic.com/apps/dota2/images/dota_react/logo.png"),
+                ("another dota 2 logo", "https://cdn.steamstatic.com/apps/dota2/images/dota_react/logo.png")
+            ], matches)
+    
+    def test_extract_markdown_links_no_matches(self):
+        matches = extract_markdown_links("This is a text with no links")
+        self.assertListEqual([], matches)
+
+    def test_extract_markdown_links(self):
+        matches = extract_markdown_links(
+            "This is text with a link [to rvelez dev](https://rvelez.dev)"
+        )
+        self.assertListEqual([
+                ("to rvelez dev", "https://rvelez.dev"), 
+            ], matches)
+
+    def test_extract_markdown_links_multiple(self):
+        matches = extract_markdown_links(
+            "This is text with a link [to rvelez dev](https://rvelez.dev) and [to github](https://github.com/rolandovlz/)"
+        )
+        self.assertListEqual([
+                ("to rvelez dev", "https://rvelez.dev"), 
+                ("to github", "https://github.com/rolandovlz/")
+            ], matches)
+
 
     
 if __name__ == "__main__":
