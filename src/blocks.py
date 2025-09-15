@@ -55,12 +55,19 @@ def markdown_to_html_node(markdown):
     blocks = markdown_to_blocks(markdown)
     children = []
     for block in blocks:
-        block_type = block_to_block_type(block)
-        if block_type == BlockType.CODE:
-            text = block[4:-3]
-            text_node = TextNode(text, TextType.TEXT)
-            child = text_node_to_html_node(text_node)
-            code_node = ParentNode("code", [child])
-            children.append(ParentNode("pre", [code_node]))
-
+        html_node = block_to_html_node(block)
+        children.append(html_node) 
     return ParentNode("div", children)
+
+def block_to_html_node(block):
+    block_type = block_to_block_type(block)
+    if block_type == BlockType.CODE:
+        return code_block_to_html_node(block)
+
+def code_block_to_html_node(block):
+    text = block[4:-3]
+    text_node = TextNode(text, TextType.TEXT)
+    child = text_node_to_html_node(text_node)
+    code_node = ParentNode("code", [child])
+
+    return ParentNode("pre", [code_node])
