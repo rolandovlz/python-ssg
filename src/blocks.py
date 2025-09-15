@@ -61,10 +61,28 @@ def markdown_to_html_node(markdown):
 
 def block_to_html_node(block):
     block_type = block_to_block_type(block)
+    if block_type == BlockType.PARAGRAPH:
+        return paragraph_to_html_node(block)
     if block_type == BlockType.CODE:
-        return code_block_to_html_node(block)
+        return code_to_html_node(block)
 
-def code_block_to_html_node(block):
+def text_to_children(text):
+    text_nodes = text_to_textnodes(text)
+    children = []
+    for text_node in text_nodes:
+        html_node = text_node_to_html_node(text_node)
+        children.append(html_node)
+    return children
+
+
+def paragraph_to_html_node(block):
+    lines = block.split("\n")
+    paragraph = " ".join(lines)
+    children = text_to_children(paragraph)
+    return ParentNode("p", children)
+
+
+def code_to_html_node(block):
     text = block[4:-3]
     text_node = TextNode(text, TextType.TEXT)
     child = text_node_to_html_node(text_node)
