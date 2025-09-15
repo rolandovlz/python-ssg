@@ -1,4 +1,7 @@
 from enum import Enum
+from htmlnode import ParentNode, LeafNode
+from textnode import TextNode, TextType
+from helpers import text_node_to_html_node, text_to_textnodes
 
 class BlockType(Enum):
     PARAGRAPH = "paragraph"
@@ -47,3 +50,17 @@ def block_to_block_type(block):
         return BlockType.ORDERED_LIST
     
     return BlockType.PARAGRAPH
+
+def markdown_to_html_node(markdown):
+    blocks = markdown_to_blocks(markdown)
+    children = []
+    for block in blocks:
+        block_type = block_to_block_type(block)
+        if block_type == BlockType.CODE:
+            text = block[4:-3]
+            text_node = TextNode(text, TextType.TEXT)
+            child = text_node_to_html_node(text_node)
+            code_node = ParentNode("code", [child])
+            children.append(ParentNode("pre", [code_node]))
+
+    return ParentNode("div", children)
