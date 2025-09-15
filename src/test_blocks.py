@@ -92,6 +92,37 @@ the **same** even with inline stuff
             "<div><pre><code>This is text that _should_ remain\nthe **same** even with inline stuff\n</code></pre></div>",
         ) 
 
+    def test_unordered_list(self):
+        md = """
+- This is a list item
+- This is another list item
+- This is a third list item with **bold** text
+"""
+
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+
+        self.assertEqual(
+            html,
+            "<div><ul><li>This is a list item</li><li>This is another list item</li><li>This is a third list item with <b>bold</b> text</li></ul></div>",
+        )
+
+    def test_ordered_list(self):
+        md = """
+1. This is a list item
+2. This is another list item
+3. This is a third list item with **bold** text
+"""
+
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+
+        self.assertEqual(
+            html,
+            "<div><ol><li>This is a list item</li><li>This is another list item</li><li>This is a third list item with <b>bold</b> text</li></ol></div>",
+        )
+
+
    
 if __name__ == "__main__":
     unittest.main()

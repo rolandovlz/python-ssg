@@ -65,6 +65,10 @@ def block_to_html_node(block):
         return paragraph_to_html_node(block)
     if block_type == BlockType.CODE:
         return code_to_html_node(block)
+    if block_type == BlockType.ORDERED_LIST:
+        return olist_to_html_node(block)
+    if block_type == BlockType.UNORDERED_LIST:
+        return ulist_to_html_node(block)
 
 def text_to_children(text):
     text_nodes = text_to_textnodes(text)
@@ -81,7 +85,6 @@ def paragraph_to_html_node(block):
     children = text_to_children(paragraph)
     return ParentNode("p", children)
 
-
 def code_to_html_node(block):
     text = block[4:-3]
     text_node = TextNode(text, TextType.TEXT)
@@ -89,3 +92,22 @@ def code_to_html_node(block):
     code_node = ParentNode("code", [child])
 
     return ParentNode("pre", [code_node])
+
+def ulist_to_html_node(block):
+    lines = block.split("\n")
+    list_items = []
+    for line in lines:
+        item = line[2:]
+        children = text_to_children(item)
+        list_items.append(ParentNode("li", children))
+
+    return ParentNode("ul", list_items)
+
+def olist_to_html_node(block):
+    lines = block.split("\n")
+    list_items = []
+    for line in lines:
+        item = line[3:]
+        children = text_to_children(item)
+        list_items.append(ParentNode("li", children))
+    return ParentNode("ol", list_items)
