@@ -69,6 +69,8 @@ def block_to_html_node(block):
         return olist_to_html_node(block)
     if block_type == BlockType.UNORDERED_LIST:
         return ulist_to_html_node(block)
+    if block_type == BlockType.QUOTE:
+        return quote_to_html_node(block)
 
 def text_to_children(text):
     text_nodes = text_to_textnodes(text)
@@ -111,3 +113,12 @@ def olist_to_html_node(block):
         children = text_to_children(item)
         list_items.append(ParentNode("li", children))
     return ParentNode("ol", list_items)
+
+def quote_to_html_node(block):
+    lines = block.split("\n")
+    new_lines = []
+    for line in lines:
+        new_lines.append(line.lstrip(">").strip())
+    block_content = " ".join(new_lines)
+    children = text_to_children(block_content)
+    return ParentNode("blockquote", children)

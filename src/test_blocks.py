@@ -122,7 +122,20 @@ the **same** even with inline stuff
             "<div><ol><li>This is a list item</li><li>This is another list item</li><li>This is a third list item with <b>bold</b> text</li></ol></div>",
         )
 
+    def test_blockquote(self):
+        md = """
+> This is a blockquote
+> with multiple lines
+> and **bold** text
+"""
 
-   
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+
+        self.assertEqual(
+            html,
+            "<div><blockquote>This is a blockquote with multiple lines and <b>bold</b> text</blockquote></div>",
+        )
+
 if __name__ == "__main__":
     unittest.main()
