@@ -71,6 +71,9 @@ def block_to_html_node(block):
         return ulist_to_html_node(block)
     if block_type == BlockType.QUOTE:
         return quote_to_html_node(block)
+    if block_type == BlockType.HEADING:
+        return heading_to_html_node(block)
+    raise ValueError("invalid block type")
 
 def text_to_children(text):
     text_nodes = text_to_textnodes(text)
@@ -80,6 +83,18 @@ def text_to_children(text):
         children.append(html_node)
     return children
 
+def heading_to_html_node(block):
+    level = 0
+    for char in block:
+        if char == "#":
+            level += 1
+        else:
+            break
+    if level + 1 >= len(block):
+        raise ValueError(f"invalid heading level: {level}")
+    text = block[level + 1 :]
+    children = text_to_children(text)
+    return ParentNode(f"h{level}", children)
 
 def paragraph_to_html_node(block):
     lines = block.split("\n")

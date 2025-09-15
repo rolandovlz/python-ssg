@@ -137,5 +137,21 @@ the **same** even with inline stuff
             "<div><blockquote>This is a blockquote with multiple lines and <b>bold</b> text</blockquote></div>",
         )
 
+    def test_headings(self):
+        md = """
+# this is an h1
+
+this is paragraph text
+
+## this is an h2
+"""
+
+        node = markdown_to_html_node(md)
+        html = node.to_html()
+        self.assertEqual(
+            html,
+            "<div><h1>this is an h1</h1><p>this is paragraph text</p><h2>this is an h2</h2></div>",
+        )
+
 if __name__ == "__main__":
     unittest.main()
