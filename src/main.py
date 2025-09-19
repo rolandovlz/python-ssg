@@ -1,20 +1,23 @@
 import os
 import shutil
-from textnode import TextNode, TextType
+
+from gencontent import generate_page
+
+dir_path_static = "./static"
+dir_path_public = "./public"
+dir_path_content = "./content"
+template_path = "./template.html"
 
 def main():
-    # node = TextNode("This is some anchor text", TextType.LINK, "https://rvelez.dev")
-    # print(node)
     generate_public()
 
 def generate_public(src=None, dest=None):
-    project_root = os.path.dirname(os.path.dirname(__file__))
-    public_path = os.path.join(project_root, "public")
+    if os.path.exists(dir_path_public):
+        shutil.rmtree(dir_path_public)
 
-    if os.path.exists(public_path):
-        shutil.rmtree(public_path)
+    copy_dir_files(dir_path_static, dir_path_public)
 
-    copy_dir_files(os.path.join(project_root, "static"), public_path)
+    generate_page(os.path.join(dir_path_content, "index.md"), template_path, os.path.join(dir_path_public, "index.html"))
 
 
 def copy_dir_files(src_dir, dest_dir=None):
