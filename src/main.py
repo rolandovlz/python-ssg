@@ -1,7 +1,7 @@
 import os
 import shutil
 
-from gencontent import generate_page
+from gencontent import generate_pages_recursive
 
 dir_path_static = "./static"
 dir_path_public = "./public"
@@ -17,7 +17,7 @@ def generate_public(src=None, dest=None):
 
     copy_dir_files(dir_path_static, dir_path_public)
 
-    generate_page(os.path.join(dir_path_content, "index.md"), template_path, os.path.join(dir_path_public, "index.html"))
+    generate_pages_recursive(dir_path_content, template_path, dir_path_public)
 
 
 def copy_dir_files(src_dir, dest_dir=None):
